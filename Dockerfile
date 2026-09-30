@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # Stage 1: Build the application
 FROM node:24-bookworm-slim AS builder
 
@@ -59,3 +57,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -fsS "http://localhost:${PORT:-4173}/" || exit 1
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "4173"]

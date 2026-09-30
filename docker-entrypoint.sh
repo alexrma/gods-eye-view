@@ -13,9 +13,9 @@ fi
 # Ensure cache directory exists
 mkdir -p /app/.gev-cache 2>/dev/null || true
 
-# Run the requested command or default to preview server
-if [ "$#" -eq 0 ]; then
+# If no args, default node command from base image, or 'preview', run vite preview
+if [ "$#" -eq 0 ] || [ "$1" = "node" ] || [ "$1" = "preview" ] || [ "$1" = "start" ]; then
   exec npx vite preview --host "${HOST:-0.0.0.0}" --port "${PORT:-4173}"
-else
-  exec "$@"
 fi
+
+exec "$@"
