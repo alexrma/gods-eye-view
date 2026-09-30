@@ -1,0 +1,49 @@
+services:
+  godseye:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+        CESIUM_ION_TOKEN: ${CESIUM_ION_TOKEN:-}
+    container_name: godseye
+    restart: unless-stopped
+    ports:
+      - "${PORT:-4173}:4173"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4173
+      # Client-side map & 3D tiles keys (injected into client runtime)
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-}
+      - CESIUM_ION_TOKEN=${CESIUM_ION_TOKEN:-}
+      # Server-side provider keys (kept strictly server-side)
+      - GOOGLE_MAPS_SERVER_API_KEY=${GOOGLE_MAPS_SERVER_API_KEY:-}
+      - GEV_RATELIMIT_GOOGLE_PER_MIN=${GEV_RATELIMIT_GOOGLE_PER_MIN:-60}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_REALTIME_MODEL=${OPENAI_REALTIME_MODEL:-gpt-realtime-2}
+      - OPENAI_REALTIME_MODEL_MINI=${OPENAI_REALTIME_MODEL_MINI:-gpt-realtime-2.1-mini}
+      - OPENAI_REALTIME_VOICE=${OPENAI_REALTIME_VOICE:-marin}
+      - OPENAI_REALTIME_REASONING_EFFORT=${OPENAI_REALTIME_REASONING_EFFORT:-low}
+      - OPENAI_REALTIME_CONTEXT_TOKENS=${OPENAI_REALTIME_CONTEXT_TOKENS:-3000}
+      - OPENAI_REALTIME_CONTEXT_RETENTION=${OPENAI_REALTIME_CONTEXT_RETENTION:-0.5}
+      - OPENAI_HUD_SUMMARY_MODEL=${OPENAI_HUD_SUMMARY_MODEL:-gpt-5-nano}
+      - GEV_RATELIMIT_OPENAI_PER_MIN=${GEV_RATELIMIT_OPENAI_PER_MIN:-30}
+      # OpenSky Aircraft Telemetry
+      - OPENSKY_AUTH_MODE=${OPENSKY_AUTH_MODE:-anon}
+      - OPENSKY_CLIENT_ID=${OPENSKY_CLIENT_ID:-}
+      - OPENSKY_CLIENT_SECRET=${OPENSKY_CLIENT_SECRET:-}
+      # Space & Satellite Tracking
+      - LL2_API_TOKEN=${LL2_API_TOKEN:-}
+      # Maritime AIS Stream
+      - AISSTREAM_API_KEY=${AISSTREAM_API_KEY:-}
+      # NASA FIRMS Fire Perimeters
+      - FIRMS_MAP_KEY=${FIRMS_MAP_KEY:-}
+      # TomTom Real-Time Traffic
+      - TOMTOM_API_KEY=${TOMTOM_API_KEY:-}
+    volumes:
+      - gev_cache:/app/.gev-cache
+
+volumes:
+  gev_cache:
+    driver: local
