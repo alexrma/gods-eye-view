@@ -35,15 +35,18 @@ ENV PORT=4173
 # Create cache directory and configure ownership for node user
 RUN mkdir -p /app/.gev-cache /app/dist && chown -R node:node /app
 
-# Copy dependencies, built assets, server proxies, and configurations
+# Copy dependencies, built assets, server proxies, configurations, scripts, and runtime files
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /app/dist ./dist
 COPY --from=builder --chown=node:node /app/server ./server
 COPY --from=builder --chown=node:node /app/src ./src
 COPY --from=builder --chown=node:node /app/build ./build
+COPY --from=builder --chown=node:node /app/config ./config
+COPY --from=builder --chown=node:node /app/scripts ./scripts
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/package.json ./package.json
 COPY --from=builder --chown=node:node /app/vite.config.js ./vite.config.js
+COPY --from=builder --chown=node:node /app/style.css ./style.css
 COPY --from=builder --chown=node:node /app/index.html ./index.html
 COPY --chown=node:node docker-entrypoint.sh /app/docker-entrypoint.sh
 
@@ -53,7 +56,7 @@ USER node
 
 EXPOSE 4173
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -fsS "http://localhost:${PORT:-4173}/" || exit 1
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
